@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
-
-from datetime import datetime
 import os
 import random
 import re
+import time
+from datetime import datetime
+
 import requests
 
 AOC_URL = 'https://adventofcode.com'
 
-# 0. Select random greeting
+# 0. Select random greeting and wait for Midnight EST
 greeting = random.choice([
     'Хо-хо-хо!',
     'Хэй!',
@@ -23,9 +24,18 @@ greeting = random.choice([
     '[ERROR: GREETING_NOT_FOUND]',
 ])
 
+start = datetime.utcnow()
+target_time = datetime(start.year, start.month, start.day, 5, 0, 1)  # Midnight EST (UTC-5)
+remaining = target_time - start
+remaining_seconds = remaining.total_seconds()
+
+if remaining_seconds > 0:
+    print(f'Sleep for {remaining}')
+    time.sleep(remaining_seconds)
+print(f'Started at {datetime.utcnow().time()}')
+
 # 1. Retrieve the daily task and parse it
-year = str(datetime.today().year)
-day = str(datetime.today().day)
+year, day = str(start.year), str(start.day)
 day_url = f'{AOC_URL}/{year}/day/{day}'
 
 response = requests.get(day_url)
@@ -51,7 +61,7 @@ data = {
         {
             "title": title,
             "url": day_url,
-            "color": 16711680, # https://convertingcolors.com/decimal-color-16711680.html
+            "color": 16711680,  # https://convertingcolors.com/decimal-color-16711680.html
         }
     ],
 }

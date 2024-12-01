@@ -19,4 +19,5 @@ jobs:
       - env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.AOC_TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.AOC_TELEGRAM_CHAT_ID }}
+          TELEGRAM_GREETINGS_CHAT_ID: ${{ secrets.AOC_TELEGRAM_GREETINGS_CHAT_ID }}
         run: ./algo-club/advent-of-code-notify.py

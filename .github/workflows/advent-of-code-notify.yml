@@ -12,10 +12,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-      - run: pip install requests
+          python-version: '3.13'
+      - run: pip install -r requirements.txt
       - env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_AOC }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.AOC_TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.AOC_TELEGRAM_CHAT_ID }}
         run: ./algo-club/advent-of-code-notify.py

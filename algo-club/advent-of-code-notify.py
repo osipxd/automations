@@ -25,7 +25,7 @@ EMOJI_CROSSED = '\U0001FAF0'
 greeting = "П-привет, программисты! *нервно теребит колпак* Сегодня первый день Advent of Code, и я так волнуюсь!!! Помогите нам спасти Рождество!!!"
 
 start = datetime.now(timezone.utc)
-target_time = datetime(start.year, start.month, start.day, 5, 0, 1)  # Midnight EST (UTC-5)
+target_time = datetime(start.year, start.month, start.day, 5, 0, 1, tzinfo=timezone.utc)  # Midnight EST (UTC-5)
 remaining = target_time - start
 remaining_seconds = remaining.total_seconds()
 

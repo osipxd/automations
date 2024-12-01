@@ -1,10 +1,10 @@
 name: Publish Advent of Code task
 
 on:
- schedule:
-   # Every day at half an hour before Midnight EST (UTC-5) from 1 to 25 December
-   - cron: '30 4 1-25 12 *'
- workflow_dispatch:
+  schedule:
+    # Every day at half an hour before Midnight EST (UTC-5) from 1 to 25 December
+    - cron: '30 4 1-25 12 *'
+  workflow_dispatch:
 
 jobs:
   publish:

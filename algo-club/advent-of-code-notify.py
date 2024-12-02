@@ -64,10 +64,20 @@ print(f'Started at {datetime.now(timezone.utc).time()} UTC')
 year, day = str(start.year), str(start.day)
 day_url = f'{AOC_URL}/{year}/day/{day}'
 
-response = requests.get(day_url)
+print('Getting task title from AoC website...')
+# AOC website might be overloaded, so we should retry requests
+retry_delay = 5 # seconds
+while True:
+    response = requests.get(day_url)
+    if response.status_code != 504:
+        break
+    print(f'Got 504 error, retrying in {retry_delay} seconds...')
+    time.sleep(retry_delay)
+    retry_delay = retry_delay * 2
 response.raise_for_status()
+
 title = re.search('<article class="day-desc"><h2>--- (.+) ---</h2>', response.text).group(1)
-print(title)
+print('Title:', title)
 
 # 2. Build message
 message = (
@@ -82,8 +92,6 @@ message = (
     f'На следующий день тред открыт для спойлеров {EMOJI_SMILE}\n'
     f'>{EMOJI_CROSSED} Помни про @aoc\\_club\\_chat, где можно общаться без привязки к задачам\\.||'
 )
-
-print(message)
 
 # 3. Send the message to Telegram
 response = requests.post(

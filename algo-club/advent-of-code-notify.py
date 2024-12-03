@@ -13,10 +13,8 @@ TELEGRAM_TARGET_CHAT_ID = int(os.environ['TELEGRAM_CHAT_ID'])
 TELEGRAM_GREETINGS_CHAT_ID = int(os.environ['TELEGRAM_GREETINGS_CHAT_ID'])
 TELEGRAM_API_URL = f'https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}'
 
-EMOJI_ELF = '\U0001F9DD'
 EMOJI_SMILE = '\U0001F642'
 EMOJI_CHRISTMAS_TREE = '\U0001F384'
-EMOJI_STAR = '\U00002B50'
 EMOJI_YAWNING = '\U0001F971'
 EMOJI_ONE = '\U0000261D\U0000FE0F'
 EMOJI_TWO = '\U0000270C\U0000FE0F'
@@ -83,7 +81,7 @@ print('Title:', title)
 message = (
     f'{EMOJI_CHRISTMAS_TREE} *[{escape(title)}]({day_url})*\n'
     '\n'
-    f'{EMOJI_ELF}: {greeting}\n'
+    f'{greeting}\n'
     '\n'
     f'**>*На всякий случай напомню правила*\n'
     '> \n'

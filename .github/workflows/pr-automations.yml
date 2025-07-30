@@ -100,6 +100,7 @@ jobs:
 
       - name: Fast forwarding
         uses: sequoia-pgp/fast-forward@v1
-        if: steps.pr.outputs.mergeable_state == 'clean' && steps.pr.outputs.has_ff_label == 'true'
+        if: steps.pr.outputs.has_ff_label == 'true' &&
+          (steps.pr.outputs.mergeable_state == 'clean' || steps.pr.outputs.mergeable_state == 'unstable')
         with:
           merge: true

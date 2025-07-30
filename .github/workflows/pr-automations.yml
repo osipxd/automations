@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
 
     if: github.event_name == 'pull_request_target' &&
-      (github.actor == 'renovate[bot]' || contains(github.event.pull_request.labels.*.name, '👍 ship!'))
+      (github.actor == 'renovate[bot]' || github.event.label.name == '👍 ship!')
 
     permissions:
       pull-requests: write
@@ -49,8 +49,8 @@ jobs:
       issues: write
 
     if: |
-      ((github.event_name == 'pull_request_target' || github.event_name == 'pull_request_review') &&
-        contains(github.event.pull_request.labels.*.name, '--ff-only')) ||
+      (github.event_name == 'pull_request_target' && github.event.label.name == '--ff-only') ||
+      (github.event_name == 'pull_request_review' && github.event.review.state == 'approved') ||
       (github.event_name == 'check_run' && github.event.check_run.pull_requests[0] != null &&
         github.event.check_run.conclusion == 'success')
 

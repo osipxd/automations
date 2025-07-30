@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run fake check
-        run:
+        run: |
           echo Running...
           sleep 1m
           echo Success.

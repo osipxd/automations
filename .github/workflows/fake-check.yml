@@ -1,0 +1,15 @@
+name: Check
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run fake check
+        run:
+          echo Running...
+          sleep 1m
+          echo Success.

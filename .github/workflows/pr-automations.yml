@@ -56,7 +56,7 @@ jobs:
         github.event.check_run.conclusion == 'success')
 
     permissions:
-      contents: read
+      contents: write
       pull-requests: write
       issues: write
 

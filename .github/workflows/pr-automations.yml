@@ -21,8 +21,10 @@ jobs:
     name: Auto-Approve
     runs-on: ubuntu-latest
 
+    # Automatically approve all dependency updates and PRs with tag '👍 ship!'
     if: github.event_name == 'pull_request_target' &&
-      (github.actor == 'renovate[bot]' || github.event.label.name == '👍 ship!')
+      (github.event.label.name == 'dependencies' && github.actor == 'renovate[bot]' || 
+        github.event.label.name == '👍 ship!')
 
     permissions:
       pull-requests: write
@@ -39,21 +41,19 @@ jobs:
           else
             echo "Skipped."
           fi
-      - name: Add '--ff-only' label to renovate PRs
-        if: github.actor == 'renovate[bot]'
-        run: |
-          gh pr edit "$PR_NUMBER" --add-label "--ff-only"
-          echo "✅ Added '--ff-only' label to the PR #$PR_NUMBER"
 
   fast-forward:
     name: Fast-Forward
     runs-on: ubuntu-latest
 
+    # Check if the PR should be merged with fast-forward when:
+    # - label '--ff-only' has been added to the PR, or
+    # - the PR has been approved, or
+    # - check run finished successfully.
     if: |
       (github.event_name == 'pull_request_target' && github.event.label.name == '--ff-only') ||
       (github.event_name == 'pull_request_review' && github.event.review.state == 'approved') ||
-      (github.event_name == 'check_run' && github.event.check_run.pull_requests[0] != null &&
-        github.event.check_run.conclusion == 'success')
+      (github.event_name == 'check_run' && github.event.check_run.conclusion == 'success')
 
     permissions:
       contents: write
@@ -61,25 +61,24 @@ jobs:
       issues: write
 
     steps:
-      - name: Extract PR properties
-        id: pr
+      - name: Check if fast-forward merge should be used
+        id: check_ff_merge
         run: |
-          pr_data=$(gh pr view "$PR_NUMBER" --json title,mergeStateStatus,labels)
-
-          title=$(echo "$pr_data" | jq -r '.title')
-          merge_state_status=$(echo "$pr_data" | jq -r '.mergeStateStatus')
-          has_ff_label=$(echo "$pr_data" | jq -r 'any(.labels[]; .name == "--ff-only")')
+          pr_data=$(gh pr view "$PR_NUMBER" --json number,title,mergeStateStatus,labels)
 
           echo "PR #$PR_NUMBER: $title"
-          echo "Mergeable state: $merge_state_status"
-          echo "Has '--ff-only' label: $has_ff_label"
+          echo "$pr_data"
 
-          echo "merge_state_status=$merge_state_status" >> $GITHUB_OUTPUT
-          echo "has_ff_label=$has_ff_label" >> $GITHUB_OUTPUT
+          # Fast-forward will be ised if:
+          # - all requirements for merging are met (the status is CLEAN or UNSTABLE), and
+          # - the PR has label "--ff-only" or "dependencies" (as we want to merge all Renovate PRs with fast-forward)
+          result=$(echo "$pr_data" | jq -r '(.mergeStateStatus | IN("CLEAN", "UNSTABLE")) and any(.labels[]; .name | IN("--ff-only", "dependencies"))')
+          echo "Should use fast-forward merge: $result"
+
+          echo "result=$result" >> $GITHUB_OUTPUT
 
       - name: Fast forwarding
         uses: sequoia-pgp/fast-forward@v1
-        if: steps.pr.outputs.has_ff_label == 'true' &&
-          (steps.pr.outputs.merge_state_status == 'CLEAN' || steps.pr.outputs.merge_state_status == 'UNSTABLE')
+        if: steps.check_ff_merge.outputs.result == 'true'
         with:
           merge: true

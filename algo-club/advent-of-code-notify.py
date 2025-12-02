@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import os
-import random
 import re
 import time
 from datetime import datetime, timezone
@@ -53,6 +52,23 @@ target_time = datetime(start.year, start.month, start.day, 5, 0, 1, tzinfo=timez
 remaining = target_time - start
 remaining_seconds = remaining.total_seconds()
 
+# Easter egg in rules. One rule per day
+third_rule = [
+    'Это правило никто не увидит\\.',
+    'Делать вовремя \\- удел слабых\\.',
+    'Не забывай спать\\!',
+    'Получай удовольствие\\!',
+    'O\\(n\\^n\\) \\- не так и плохо, если n маленькое\\.',
+    'Hardcode \\- это тоже алгоритм\\.',
+    'Все мы иногда не умеем читать\\.',
+    'Если работает на твоей машине \\- этого достаточно\\.',
+    'Копипаста из прошлогодних решений не считается за читерство\\.',
+    'Рефакторинг можно отложить на январь\\.',
+    'НИКОМУ не рассказывать про Advent of Code\\.',
+    'Алгоритм не должен вредить программисту или своим бездействием допустить, чтобы программисту был нанесён вред\\.',
+    'После этой задачи можно и подготовкой к Рождеству заняться\\.',
+]
+
 if remaining_seconds > 0:
     print(f'Sleep for {remaining}')
     time.sleep(remaining_seconds)
@@ -88,7 +104,7 @@ message = (
     f'>{EMOJI_ONE} Обсуждаем задачи в комментариях к посту\n'
     f'>{EMOJI_TWO} Прячь все спойлеры ||вот так|| в день публикации задачи\\. '
     f'На следующий день тред открыт для спойлеров {EMOJI_SMILE}\n'
-    f'>{EMOJI_CROSSED} Помни про @aoc\\_club\\_chat, где можно общаться без привязки к задачам\\.||'
+    f'>{EMOJI_CROSSED} {third_rule[int(day)]}||'
 )
 
 # 3. Send the message to Telegram

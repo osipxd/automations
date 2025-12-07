@@ -32,19 +32,20 @@ start = datetime.now(timezone.utc)
 # Get the latest message from greetings chat
 updates = requests.get(f'{TELEGRAM_API_URL}/getUpdates').json()['result']
 latest_message = next(
-    message for update in reversed(updates)
-    if (message := update.get('message') or update.get('edited_message'))
-       and message['chat']['id'] == TELEGRAM_GREETINGS_CHAT_ID
-       and message['from']['id'] == TELEGRAM_GREETINGS_CHAT_ID
+    (message for update in reversed(updates)
+     if (message := update.get('message') or update.get('edited_message'))
+        and message['chat']['id'] == TELEGRAM_GREETINGS_CHAT_ID
+        and message['from']['id'] == TELEGRAM_GREETINGS_CHAT_ID),
+    None,
 )
-sent_at = datetime.fromtimestamp(latest_message['date'], timezone.utc)
+sent_at = latest_message and datetime.fromtimestamp(latest_message['date'], timezone.utc)
 
-# Use it only if it is not for the previous day
-if (start - sent_at).total_seconds() < 24 * 60 * 60:
+# Use it only if it exists and is not for the previous day
+if sent_at and (start - sent_at).total_seconds() < 24 * 60 * 60:
     greeting = latest_message['text']
 else:
-    # Fallback to default greeting if there is no prepared one.
-    greeting = escape('*азартно потирает руки* Мне кажется мы почти нашли главного историка! Продолжим???')
+    # Fallback to the default greeting if there is no a prepared one.
+    greeting = escape('Продолжим?')
 print('Greeting:', greeting)
 
 # Wait for new task availability
